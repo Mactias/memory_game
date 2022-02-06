@@ -1,0 +1,14 @@
+C:\Users\Ograniczony\source\repos\memory_game\memory_game\bin\Debug\netcoreapp3.1\memory_game.exe
+C:\Users\Ograniczony\source\repos\memory_game\memory_game\bin\Debug\netcoreapp3.1\memory_game.deps.json
+C:\Users\Ograniczony\source\repos\memory_game\memory_game\bin\Debug\netcoreapp3.1\memory_game.runtimeconfig.json
+C:\Users\Ograniczony\source\repos\memory_game\memory_game\bin\Debug\netcoreapp3.1\memory_game.runtimeconfig.dev.json
+C:\Users\Ograniczony\source\repos\memory_game\memory_game\bin\Debug\netcoreapp3.1\memory_game.dll
+C:\Users\Ograniczony\source\repos\memory_game\memory_game\bin\Debug\netcoreapp3.1\memory_game.pdb
+C:\Users\Ograniczony\source\repos\memory_game\memory_game\obj\Debug\netcoreapp3.1\memory_game.csproj.AssemblyReference.cache
+C:\Users\Ograniczony\source\repos\memory_game\memory_game\obj\Debug\netcoreapp3.1\memory_game.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Ograniczony\source\repos\memory_game\memory_game\obj\Debug\netcoreapp3.1\memory_game.AssemblyInfoInputs.cache
+C:\Users\Ograniczony\source\repos\memory_game\memory_game\obj\Debug\netcoreapp3.1\memory_game.AssemblyInfo.cs
+C:\Users\Ograniczony\source\repos\memory_game\memory_game\obj\Debug\netcoreapp3.1\memory_game.csproj.CoreCompileInputs.cache
+C:\Users\Ograniczony\source\repos\memory_game\memory_game\obj\Debug\netcoreapp3.1\memory_game.dll
+C:\Users\Ograniczony\source\repos\memory_game\memory_game\obj\Debug\netcoreapp3.1\memory_game.pdb
+C:\Users\Ograniczony\source\repos\memory_game\memory_game\obj\Debug\netcoreapp3.1\memory_game.genruntimeconfig.cache
