@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace memory_game
 {
@@ -11,9 +14,26 @@ namespace memory_game
 			{
 				Console.WriteLine("1. Play Game\n2. Exit");
 				ConsoleKeyInfo input = Console.ReadKey();
-				if (input.KeyChar == '1') //Start game
+				if (input.KeyChar == '1') //Play game
 				{
-					Console.WriteLine("playing game");
+					Console.WriteLine("\nSelect difficulty level\n1. Easy\n2. Hard");
+					ConsoleKeyInfo difficulty = Console.ReadKey();
+					if (difficulty.KeyChar == '1') // Easy difficulty
+					{
+						GetWords(4);
+						Console.WriteLine("\nPlay easy level");
+						return 0;
+					}
+					else if (difficulty.KeyChar == '2') // Hard difficulty
+					{
+						GetWords(8);
+						Console.WriteLine("\nPlay hard level");
+						return 0;
+					}
+					else
+					{
+						Console.WriteLine("\nEnter 1 or 2");
+					}
 				} 
 				else if(input.KeyChar == '2') //Exit game
 				{
@@ -24,6 +44,30 @@ namespace memory_game
 					Console.WriteLine("\nEnter 1 or 2");
 				}
 			} while (true);
+		}
+
+		private static string[] GetWords(int count)
+		{
+			Random rnd = new Random();
+			string path = "Words.txt";
+			string readText = File.ReadAllText(path);
+
+			string[] words = new string[count];
+			List<string> all_words = readText.Split("\n").ToList<string>();
+
+			for (int i = 0; i < count; i++)
+			{
+				int index = rnd.Next(0, all_words.Count);
+				words[i] = all_words[index];
+				all_words.RemoveAt(index);
+			}
+
+			for (int i = 0; i < words.Length; i++)
+			{
+				words[i] = words[i].Trim();
+			}
+
+			return words;
 		}
 	}
 }
