@@ -22,13 +22,13 @@ namespace memory_game
 					{
 						GetWords(4);
 						Console.WriteLine("\nPlay easy level");
-						return 0;
+						GameEngine game = new GameEngine("easy", GetWords(4));
 					}
 					else if (difficulty.KeyChar == '2') // Hard difficulty
 					{
 						GetWords(8);
 						Console.WriteLine("\nPlay hard level");
-						return 0;
+						GameEngine game = new GameEngine("hard", GetWords(8));
 					}
 					else
 					{
@@ -67,7 +67,11 @@ namespace memory_game
 				words[i] = words[i].Trim();
 			}
 
-			return words;
+			string[] words2 = new string[words.Length * 2];
+			words.CopyTo(words2, 0);
+			words.CopyTo(words2, words.Length);
+
+			return words2;
 		}
 	}
 }
