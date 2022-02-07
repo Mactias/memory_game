@@ -9,10 +9,10 @@ namespace memory_game
 		private Dictionary<string, string> coordinates = new Dictionary<string, string>();
 		private Dictionary<string, string> guessedCoordinates = new Dictionary<string, string>();
 		private List<string> availabeCoordinates;
-		private string[] board;
 		private Dictionary<string, string> boardDic;
 		private string[] words;
 		private readonly string difficulty;
+		private int guessChances;
 		public GameEngine(string difficulty, string[] words)
 		{
 			this.difficulty = difficulty;
@@ -20,20 +20,22 @@ namespace memory_game
 
 			if (difficulty == "easy")
 			{
+				guessChances = 10;
 				boardDic = new Dictionary<string, string>() 
 				{
 					{ "A1", "X" }, { "A2", "X" }, { "A3", "X" }, { "A4", "X" },
 					{ "B1", "X" }, { "B2", "X" }, { "B3", "X" }, { "B4", "X" },
 				};
-				board = new string[] { "X", "X", "X", "X", "X", "X", "X", "X"};
 				availabeCoordinates = new List<string>() { "A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4" };
-				//PrintBoard();
 				BeginEasyGame();
 			}
 		}
 
 		private void BeginEasyGame()
 		{
+			Console.WriteLine("\nLevel: {0}", difficulty);
+			Console.WriteLine("Guess Chances: {0}", guessChances);
+
 			Console.WriteLine("\n  1 2 3 4");
 			Console.WriteLine("A X X X X");
 			Console.WriteLine("B X X X X");
@@ -75,6 +77,12 @@ namespace memory_game
 							{
 								boardDic[input1] = "X";
 								boardDic[input2] = "X";
+								guessChances--;
+								if (guessChances <= 0)
+								{
+									Console.WriteLine("You lost.");
+									endgame = true;
+								}
 								break;
 							}
 						}
@@ -94,6 +102,9 @@ namespace memory_game
 
 		private void PrintBoard(string coordinate)
 		{
+			Console.WriteLine("Level: {0}", difficulty);
+			Console.WriteLine("Guess Chances: {0}", guessChances);
+
 			boardDic[coordinate] = coordinates[coordinate];
 
 			string first_row = "  1";

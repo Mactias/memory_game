@@ -21,13 +21,13 @@ namespace memory_game
 					if (difficulty.KeyChar == '1') // Easy difficulty
 					{
 						GetWords(4);
-						Console.WriteLine("\nPlay easy level");
+						//Console.WriteLine("\nPlay easy level");
 						GameEngine game = new GameEngine("easy", GetWords(4));
 					}
 					else if (difficulty.KeyChar == '2') // Hard difficulty
 					{
 						GetWords(8);
-						Console.WriteLine("\nPlay hard level");
+						//Console.WriteLine("\nPlay hard level");
 						GameEngine game = new GameEngine("hard", GetWords(8));
 					}
 					else
