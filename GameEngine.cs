@@ -21,64 +21,94 @@ namespace memory_game
 			if (difficulty == "easy")
 			{
 				guessChances = 10;
-				boardDic = new Dictionary<string, string>() 
+
+				InitializeBoard(4);
+				BeginEasyGame();
+			}
+			else
+			{
+				guessChances = 15;
+				boardDic = new Dictionary<string, string>()
 				{
 					{ "A1", "X" }, { "A2", "X" }, { "A3", "X" }, { "A4", "X" },
+					{ "A5", "X" }, { "A6", "X" }, { "A7", "X" }, { "A8", "X" },
 					{ "B1", "X" }, { "B2", "X" }, { "B3", "X" }, { "B4", "X" },
+					{ "B5", "X" }, { "B6", "X" }, { "B7", "X" }, { "B8", "X" },
 				};
-				availabeCoordinates = new List<string>() { "A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4" };
-				BeginEasyGame();
+				availabeCoordinates = new List<string>() { "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8",
+														   "B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8" };
+				//BeginEasyGame();
 			}
 		}
 
+		private void InitializeBoard(int length)
+		{
+			boardDic = new Dictionary<string, string>();
+			availabeCoordinates = new List<string>();
+
+			for (int i = 0; i < 2; i++)
+			{
+				for (int j = 1; j <= length; j++)
+				{
+					if (i == 0)
+					{
+						boardDic.Add("A" + j, "X");
+						availabeCoordinates.Add("A" + j);
+					}
+					else
+					{
+						boardDic.Add("B" + j, "X");
+						availabeCoordinates.Add("B" + j);
+					}
+				}
+			}				
+		}
 		private void BeginEasyGame()
 		{
-			Console.WriteLine("\nLevel: {0}", difficulty);
-			Console.WriteLine("Guess Chances: {0}", guessChances);
-
-			Console.WriteLine("\n  1 2 3 4");
-			Console.WriteLine("A X X X X");
-			Console.WriteLine("B X X X X");
 			AssignCoordiates();
+			PrintBoard(4);
+
 			bool endgame = false;
 			do
 			{
 				Console.WriteLine("Enter first coordinates: ");
 				string input1 = Console.ReadLine().ToUpper();
+				Console.WriteLine();
 				if (availabeCoordinates.Contains(input1)) // valid first user input
 				{
-					Console.WriteLine("input1 = {0}", coordinates[input1]);
+					//Console.WriteLine("input1 = {0}", coordinates[input1]);
 					PrintBoard(input1);
 					while (true)
 					{
 						Console.WriteLine("Enter second coordinates: ");
 						string input2 = Console.ReadLine().ToUpper();
-						if (input1 == input2)
+						Console.WriteLine();
+						if (input1 == input2) // the same inputs ex. "A1" and "A1"
 						{
-							Console.WriteLine("Second coordinates must be different!");
+							Console.WriteLine("Second coordinate must be different!");
 						}
 						else if (availabeCoordinates.Contains(input2)) // valid second user input
 						{
-							Console.WriteLine("input2 = {0}", coordinates[input2]);
+							//Console.WriteLine("input2 = {0}", coordinates[input2]);
 							PrintBoard(input2);
 							if (coordinates[input1] == coordinates[input2]) // words match
 							{
-								Console.WriteLine("inp1 == inp2");
+								//Console.WriteLine("inp1 == inp2");
 								availabeCoordinates.Remove(input1);
 								availabeCoordinates.Remove(input2);
-								if (availabeCoordinates.Count == 0)
+								if (availabeCoordinates.Count == 0) // no more moves. Player wins. Exit to menu
 								{
 									Console.WriteLine("Congratulations you win!");
 									endgame = true;
 								}
 								break;
 							}
-							else
+							else // words doesn't match
 							{
 								boardDic[input1] = "X";
 								boardDic[input2] = "X";
 								guessChances--;
-								if (guessChances <= 0)
+								if (guessChances <= 0) // Game over and exit to menu
 								{
 									Console.WriteLine("You lost.");
 									endgame = true;
@@ -86,13 +116,13 @@ namespace memory_game
 								break;
 							}
 						}
-						else
+						else // wrong second input ex. "123", "a11", "xxxxx" etc.
 						{
 							Console.WriteLine("Wrong coordinates!");
 						}
 					}
 				}
-				else
+				else // wrong first input ex. "123", "a11", "xxxxx" etc.
 				{
 					Console.WriteLine("Wrong coordinates!");
 				}
@@ -100,10 +130,29 @@ namespace memory_game
 			} while (!endgame);
 		}
 
-		private void PrintBoard(string coordinate)
+		private void PrintBoard(int length)
 		{
+			Console.WriteLine("\n- - - - - - - - - -");
 			Console.WriteLine("Level: {0}", difficulty);
 			Console.WriteLine("Guess Chances: {0}", guessChances);
+
+			string firstLine = "\n  ";
+			string secondLine = "A ";
+			string thirdLine =  "B ";
+			for (int i = 1; i <= length; i++)
+			{
+				firstLine += i + " ";
+				secondLine += "X ";
+				thirdLine  += "X ";
+			}
+			Console.WriteLine(firstLine + "\n" + secondLine + "\n" + thirdLine + "\n");
+
+		}
+		private void PrintBoard(string coordinate)
+		{
+			Console.WriteLine("- - - - - - - - - -");
+			Console.WriteLine("Level: {0}", difficulty);
+			Console.WriteLine("Guess Chances: {0}\n", guessChances);
 
 			boardDic[coordinate] = coordinates[coordinate];
 
@@ -120,7 +169,7 @@ namespace memory_game
 			second_row += arr[1] + arr2[1] + arr3[1] + arr4[1];
 			third_row += arr[2] + arr2[2] + arr3[2] + arr4[2];
 
-			Console.WriteLine(first_row + "\n" + second_row + "\n" + third_row);
+			Console.WriteLine(first_row + "\n" + second_row + "\n" + third_row + "\n");
 		}
 
 		private string[] FormatRows(string number, string x1, string x2)
