@@ -7,9 +7,8 @@ namespace memory_game
 	public class GameEngine
 	{
 		private Dictionary<string, string> coordinates = new Dictionary<string, string>();
-		private Dictionary<string, string> guessedCoordinates = new Dictionary<string, string>();
 		private List<string> availabeCoordinates;
-		private Dictionary<string, string> boardDic;
+		private Dictionary<string, string> boardDict;
 		private string[] words;
 		private readonly string difficulty;
 		private int guessChances;
@@ -22,28 +21,22 @@ namespace memory_game
 			{
 				guessChances = 10;
 
-				//InitializeBoard(4);
-				BeginEasyGame(4);
+				BeginGame(4);
 			}
 			else
 			{
 				guessChances = 15;
-				//boardDic = new Dictionary<string, string>()
-				//{
-				//	{ "A1", "X" }, { "A2", "X" }, { "A3", "X" }, { "A4", "X" },
-				//	{ "A5", "X" }, { "A6", "X" }, { "A7", "X" }, { "A8", "X" },
-				//	{ "B1", "X" }, { "B2", "X" }, { "B3", "X" }, { "B4", "X" },
-				//	{ "B5", "X" }, { "B6", "X" }, { "B7", "X" }, { "B8", "X" },
-				//};
-				//availabeCoordinates = new List<string>() { "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8",
-				//										   "B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8" };
-				BeginEasyGame(8);
+
+				BeginGame(8);
 			}
 		}
-
+		/// <summary>
+		/// Fill the fields <c>boardDic</c> and <c>availabeCoordinates</c>
+		/// </summary>
+		/// <param name="length"></param>
 		private void InitializeBoard(int length)
 		{
-			boardDic = new Dictionary<string, string>();
+			boardDict = new Dictionary<string, string>();
 			availabeCoordinates = new List<string>();
 
 			for (int i = 0; i < 2; i++)
@@ -52,18 +45,18 @@ namespace memory_game
 				{
 					if (i == 0)
 					{
-						boardDic.Add("A" + j, "X");
+						boardDict.Add("A" + j, "X");
 						availabeCoordinates.Add("A" + j);
 					}
 					else
 					{
-						boardDic.Add("B" + j, "X");
+						boardDict.Add("B" + j, "X");
 						availabeCoordinates.Add("B" + j);
 					}
 				}
 			}
 		}
-		private void BeginEasyGame(int length)
+		private void BeginGame(int length)
 		{
 			InitializeBoard(length);
 			AssignCoordiates(length);
@@ -77,7 +70,6 @@ namespace memory_game
 				Console.WriteLine();
 				if (availabeCoordinates.Contains(input1)) // valid first user input
 				{
-					//Console.WriteLine("input1 = {0}", coordinates[input1]);
 					PrintBoard(input1);
 					while (true)
 					{
@@ -90,28 +82,26 @@ namespace memory_game
 						}
 						else if (availabeCoordinates.Contains(input2)) // valid second user input
 						{
-							//Console.WriteLine("input2 = {0}", coordinates[input2]);
 							PrintBoard(input2);
 							if (coordinates[input1] == coordinates[input2]) // words match
 							{
-								//Console.WriteLine("inp1 == inp2");
 								availabeCoordinates.Remove(input1);
 								availabeCoordinates.Remove(input2);
 								if (availabeCoordinates.Count == 0) // no more moves. Player wins. Exit to menu
 								{
-									Console.WriteLine("Congratulations you win!");
+									Console.WriteLine("Congratulations you win! What do you want to do now?");
 									endgame = true;
 								}
 								break;
 							}
 							else // words doesn't match
 							{
-								boardDic[input1] = "X";
-								boardDic[input2] = "X";
+								boardDict[input1] = "X";
+								boardDict[input2] = "X";
 								guessChances--;
 								if (guessChances <= 0) // Game over and exit to menu
 								{
-									Console.WriteLine("You lost.");
+									Console.WriteLine("You lost. What do you want to do now?");
 									endgame = true;
 								}
 								break;
@@ -127,7 +117,6 @@ namespace memory_game
 				{
 					Console.WriteLine("Wrong coordinates!");
 				}
-				//PrintBoard();
 			} while (!endgame);
 		}
 
@@ -155,7 +144,7 @@ namespace memory_game
 			Console.WriteLine("Level: {0}", difficulty);
 			Console.WriteLine("Guess Chances: {0}\n", guessChances);
 
-			boardDic[coordinate] = coordinates[coordinate];
+			boardDict[coordinate] = coordinates[coordinate];
 
 			string first_row = "  1";
 			string second_row = "A ";
@@ -170,18 +159,29 @@ namespace memory_game
 			second_row += arr[1] + arr2[1] + arr3[1] + arr4[1];
 			third_row += arr[2] + arr2[2] + arr3[2] + arr4[2];
 
+			if (difficulty == "hard")
+			{
+				string[] arr5 = FormatRows("5", "A5", "B5");
+				string[] arr6 = FormatRows("6", "A6", "B6");
+				string[] arr7 = FormatRows("7", "A7", "B7");
+				string[] arr8 = FormatRows("8", "A8", "B8");
+
+				first_row += arr5[0] + arr6[0] + arr7[0] + arr8[0];
+				second_row += arr5[1] + arr6[1] + arr7[1] + arr8[1];
+				third_row += arr5[2] + arr6[2] + arr7[2] + arr8[2];
+			}
+
 			Console.WriteLine(first_row + "\n" + second_row + "\n" + third_row + "\n");
 		}
 
 		private string[] FormatRows(string number, string x1, string x2)
 		{
-			//int diff = boardDic[x1].Length - boardDic[x2].Length;
-			if (boardDic[x1].Length > boardDic[x2].Length)
+			if (boardDict[x1].Length > boardDict[x2].Length)
 			{
-				int diff = boardDic[x1].Length - boardDic[x2].Length;
-				string first_row = number + new string(' ', boardDic[x1].Length);
-				string second_row = boardDic[x1] + " ";
-				string third_row = boardDic[x2] + new string(' ', diff + 1);
+				int diff = boardDict[x1].Length - boardDict[x2].Length;
+				string first_row = number + new string(' ', boardDict[x1].Length);
+				string second_row = boardDict[x1] + " ";
+				string third_row = boardDict[x2] + new string(' ', diff + 1);
 
 				string[] ret = { first_row, second_row, third_row };
 
@@ -189,16 +189,15 @@ namespace memory_game
 			}
 			else
 			{
-				int diff = boardDic[x2].Length - boardDic[x1].Length;
-				string first_row = number + new string(' ', boardDic[x2].Length);
-				string second_row = boardDic[x1] + new string(' ', diff + 1);
-				string third_row = boardDic[x2] + " ";
+				int diff = boardDict[x2].Length - boardDict[x1].Length;
+				string first_row = number + new string(' ', boardDict[x2].Length);
+				string second_row = boardDict[x1] + new string(' ', diff + 1);
+				string third_row = boardDict[x2] + " ";
 
 				string[] ret = { first_row, second_row, third_row };
 
 				return ret;
 			}
-			//int diff = boardDic[x1].Length > boardDic[x2].Length ? boardDic[x1].Length - boardDic[x2].Length : boardDic[x2].Length - boardDic[x1].Length;
 		}
 
 		/// <summary>
