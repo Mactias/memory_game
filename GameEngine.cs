@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace memory_game
 {
@@ -100,6 +102,7 @@ namespace memory_game
 									Console.WriteLine("Congratulations you win!");
 									Console.WriteLine($"You solved the memory game after {guessChances - guessChancesLeft} chances. " 
 														+ $"It took you {stopWatch.Elapsed.TotalSeconds} seconds");
+									SaveScore();
 									Console.WriteLine("What do you want to do now?");
 									endgame = true;
 								}
@@ -253,6 +256,24 @@ namespace memory_game
 					}
 					index++;
 				}
+			}
+		}
+
+		private async Task SaveScore()
+		{
+			Console.WriteLine("Enter your name: ");
+			string name = Console.ReadLine();
+			//System.Text.StringBuilder score = new System.Text.StringBuilder();
+			DateTime today = DateTime.Today;
+			string score = $"{name} | {today.ToShortDateString()} | {stopWatch.Elapsed.TotalSeconds} " + 
+							$"| {guessChances - guessChancesLeft} |";
+			if (difficulty == "easy")
+			{
+				await File.WriteAllTextAsync("high_score_easy.txt", score);
+			}
+			else
+			{
+				await File.WriteAllTextAsync("high_score_hard.txt", score);
 			}
 		}
 	}
