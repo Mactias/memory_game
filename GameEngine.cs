@@ -6,26 +6,32 @@ namespace memory_game
 {
 	public class GameEngine
 	{
+		private System.Diagnostics.Stopwatch stopWatch = new System.Diagnostics.Stopwatch();
 		private Dictionary<string, string> coordinates = new Dictionary<string, string>();
 		private List<string> availabeCoordinates;
 		private Dictionary<string, string> boardDict;
 		private string[] words;
+		private int guessChancesLeft;
+		private readonly int guessChances;
 		private readonly string difficulty;
-		private int guessChances;
 		public GameEngine(string difficulty, string[] words)
 		{
+			stopWatch.Start();
+
 			this.difficulty = difficulty;
 			this.words = words;
 
 			if (difficulty == "easy")
 			{
 				guessChances = 10;
+				guessChancesLeft = 10;
 
 				BeginGame(4);
 			}
 			else
 			{
 				guessChances = 15;
+				guessChancesLeft = 15;
 
 				BeginGame(8);
 			}
@@ -89,7 +95,12 @@ namespace memory_game
 								availabeCoordinates.Remove(input2);
 								if (availabeCoordinates.Count == 0) // no more moves. Player wins. Exit to menu
 								{
-									Console.WriteLine("Congratulations you win! What do you want to do now?");
+									stopWatch.Stop();
+
+									Console.WriteLine("Congratulations you win!");
+									Console.WriteLine($"You solved the memory game after {guessChances - guessChancesLeft} chances. " 
+														+ $"It took you {stopWatch.Elapsed.TotalSeconds} seconds");
+									Console.WriteLine("What do you want to do now?");
 									endgame = true;
 								}
 								break;
@@ -98,8 +109,8 @@ namespace memory_game
 							{
 								boardDict[input1] = "X";
 								boardDict[input2] = "X";
-								guessChances--;
-								if (guessChances <= 0) // Game over and exit to menu
+								guessChancesLeft--;
+								if (guessChancesLeft <= 0) // Game over and exit to menu
 								{
 									Console.WriteLine("You lost. What do you want to do now?");
 									endgame = true;
@@ -120,11 +131,15 @@ namespace memory_game
 			} while (!endgame);
 		}
 
+		/// <summary>
+		/// Print empty Board to the console. 
+		/// </summary>
+		/// <param name="length">for easy mode length must be 4, for hard 8</param>
 		private void PrintBoard(int length)
 		{
 			Console.WriteLine("\n- - - - - - - - - -");
 			Console.WriteLine("Level: {0}", difficulty);
-			Console.WriteLine("Guess Chances: {0}", guessChances);
+			Console.WriteLine("Guess Chances: {0}", guessChancesLeft);
 
 			string firstLine = "\n  ";
 			string secondLine = "A ";
@@ -138,11 +153,15 @@ namespace memory_game
 			Console.WriteLine(firstLine + "\n" + secondLine + "\n" + thirdLine + "\n");
 
 		}
+		/// <summary>
+		/// Print actual board to the console.
+		/// </summary>
+		/// <param name="coordinate">ex. "A1", "B3"</param>
 		private void PrintBoard(string coordinate)
 		{
 			Console.WriteLine("- - - - - - - - - -");
 			Console.WriteLine("Level: {0}", difficulty);
-			Console.WriteLine("Guess Chances: {0}\n", guessChances);
+			Console.WriteLine("Guess Chances: {0}\n", guessChancesLeft);
 
 			boardDict[coordinate] = coordinates[coordinate];
 
@@ -174,6 +193,14 @@ namespace memory_game
 			Console.WriteLine(first_row + "\n" + second_row + "\n" + third_row + "\n");
 		}
 
+		/// <summary>
+		/// Format board's rows add spaces to them. All parameters refer to the same column! 
+		/// ex. if number is "2" x1 must be "A2" and x2 "B2"
+		/// </summary>
+		/// <param name="number">First row coordinate</param>
+		/// <param name="x1">Second row coordinate ex. "A1"..."A8"</param>
+		/// <param name="x2">Second row coordinate ex. "B1"..."B8"</param>
+		/// <returns></returns>
 		private string[] FormatRows(string number, string x1, string x2)
 		{
 			if (boardDict[x1].Length > boardDict[x2].Length)
@@ -226,11 +253,6 @@ namespace memory_game
 					}
 					index++;
 				}
-			}
-
-			foreach (var item in coordinates)
-			{
-				Console.WriteLine($"{item.Key}, {item.Value}");
 			}
 		}
 	}
