@@ -22,22 +22,22 @@ namespace memory_game
 			{
 				guessChances = 10;
 
-				InitializeBoard(4);
-				BeginEasyGame();
+				//InitializeBoard(4);
+				BeginEasyGame(4);
 			}
 			else
 			{
 				guessChances = 15;
-				boardDic = new Dictionary<string, string>()
-				{
-					{ "A1", "X" }, { "A2", "X" }, { "A3", "X" }, { "A4", "X" },
-					{ "A5", "X" }, { "A6", "X" }, { "A7", "X" }, { "A8", "X" },
-					{ "B1", "X" }, { "B2", "X" }, { "B3", "X" }, { "B4", "X" },
-					{ "B5", "X" }, { "B6", "X" }, { "B7", "X" }, { "B8", "X" },
-				};
-				availabeCoordinates = new List<string>() { "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8",
-														   "B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8" };
-				//BeginEasyGame();
+				//boardDic = new Dictionary<string, string>()
+				//{
+				//	{ "A1", "X" }, { "A2", "X" }, { "A3", "X" }, { "A4", "X" },
+				//	{ "A5", "X" }, { "A6", "X" }, { "A7", "X" }, { "A8", "X" },
+				//	{ "B1", "X" }, { "B2", "X" }, { "B3", "X" }, { "B4", "X" },
+				//	{ "B5", "X" }, { "B6", "X" }, { "B7", "X" }, { "B8", "X" },
+				//};
+				//availabeCoordinates = new List<string>() { "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8",
+				//										   "B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8" };
+				BeginEasyGame(8);
 			}
 		}
 
@@ -61,12 +61,13 @@ namespace memory_game
 						availabeCoordinates.Add("B" + j);
 					}
 				}
-			}				
+			}
 		}
-		private void BeginEasyGame()
+		private void BeginEasyGame(int length)
 		{
-			AssignCoordiates();
-			PrintBoard(4);
+			InitializeBoard(length);
+			AssignCoordiates(length);
+			PrintBoard(length);
 
 			bool endgame = false;
 			do
@@ -138,12 +139,12 @@ namespace memory_game
 
 			string firstLine = "\n  ";
 			string secondLine = "A ";
-			string thirdLine =  "B ";
+			string thirdLine = "B ";
 			for (int i = 1; i <= length; i++)
 			{
 				firstLine += i + " ";
 				secondLine += "X ";
-				thirdLine  += "X ";
+				thirdLine += "X ";
 			}
 			Console.WriteLine(firstLine + "\n" + secondLine + "\n" + thirdLine + "\n");
 
@@ -160,7 +161,7 @@ namespace memory_game
 			string second_row = "A ";
 			string third_row = "B ";
 
-			string[] arr =  FormatRows("", "A1", "B1");
+			string[] arr = FormatRows("", "A1", "B1");
 			string[] arr2 = FormatRows("2", "A2", "B2");
 			string[] arr3 = FormatRows("3", "A3", "B3");
 			string[] arr4 = FormatRows("4", "A4", "B4");
@@ -199,20 +200,33 @@ namespace memory_game
 			}
 			//int diff = boardDic[x1].Length > boardDic[x2].Length ? boardDic[x1].Length - boardDic[x2].Length : boardDic[x2].Length - boardDic[x1].Length;
 		}
-		private void AssignCoordiates()
+
+		/// <summary>
+		/// Method <c>AssignCoordinates</c> assign words to the field <c>coordinates<c>
+		/// </summary>
+		/// <param name="length">
+		/// sets length of the <c>coordinates</c>.Length must be 4 for easy game or 8 for hard game
+		/// </param>
+		private void AssignCoordiates(int length)
 		{
 			Random rnd = new Random();
 			words = words.OrderBy(x => rnd.Next()).ToArray();
-			if (difficulty == "easy")
+
+			int index = 0;
+			for (int i = 0; i < 2; i++)
 			{
-				coordinates.Add("A1", words[0]);
-				coordinates.Add("A2", words[1]);
-				coordinates.Add("A3", words[2]);
-				coordinates.Add("A4", words[3]);
-				coordinates.Add("B1", words[4]);
-				coordinates.Add("B2", words[5]);
-				coordinates.Add("B3", words[6]);
-				coordinates.Add("B4", words[7]);
+				for (int j = 1; j <= length; j++)
+				{
+					if (i == 0)
+					{
+						coordinates.Add("A" + j, words[index]);
+					}
+					else
+					{
+						coordinates.Add("B" + j, words[index]);
+					}
+					index++;
+				}
 			}
 
 			foreach (var item in coordinates)
