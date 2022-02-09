@@ -38,6 +38,7 @@ namespace memory_game
 				BeginGame(8);
 			}
 		}
+
 		/// <summary>
 		/// Fill the fields <c>boardDic</c> and <c>availabeCoordinates</c>
 		/// </summary>
@@ -68,11 +69,12 @@ namespace memory_game
 		{
 			InitializeBoard(length);
 			AssignCoordiates(length);
-			PrintBoard(length);
 
 			bool endgame = false;
 			do
 			{
+				Console.Clear();
+				PrintBoard("none");
 				Console.WriteLine("Enter first coordinates: ");
 				string input1 = Console.ReadLine().ToUpper();
 				Console.WriteLine();
@@ -98,11 +100,13 @@ namespace memory_game
 								if (availabeCoordinates.Count == 0) // no more moves. Player wins. Exit to menu
 								{
 									stopWatch.Stop();
+									Console.Clear();
 
 									Console.WriteLine("Congratulations you win!");
 									Console.WriteLine($"You solved the memory game after {guessChances - guessChancesLeft} chances. " 
 														+ $"It took you {stopWatch.Elapsed.TotalSeconds} seconds");
 									SaveScore();
+									PrintScore();
 									Console.WriteLine("What do you want to do now?");
 									endgame = true;
 								}
@@ -115,8 +119,14 @@ namespace memory_game
 								guessChancesLeft--;
 								if (guessChancesLeft <= 0) // Game over and exit to menu
 								{
+									PrintScore();
 									Console.WriteLine("You lost. What do you want to do now?");
 									endgame = true;
+								}
+								else
+								{
+									Console.WriteLine("Press any key.");
+									Console.ReadKey();
 								}
 								break;
 							}
@@ -129,44 +139,26 @@ namespace memory_game
 				}
 				else // wrong first input ex. "123", "a11", "xxxxx" etc.
 				{
-					Console.WriteLine("Wrong coordinates!");
+					Console.WriteLine("Wrong coordinates! Press any key.");
+					Console.ReadKey();
 				}
 			} while (!endgame);
 		}
 
 		/// <summary>
-		/// Print empty Board to the console. 
-		/// </summary>
-		/// <param name="length">for easy mode length must be 4, for hard 8</param>
-		private void PrintBoard(int length)
-		{
-			Console.WriteLine("\n- - - - - - - - - -");
-			Console.WriteLine("Level: {0}", difficulty);
-			Console.WriteLine("Guess Chances: {0}", guessChancesLeft);
-
-			string firstLine = "\n  ";
-			string secondLine = "A ";
-			string thirdLine = "B ";
-			for (int i = 1; i <= length; i++)
-			{
-				firstLine += i + " ";
-				secondLine += "X ";
-				thirdLine += "X ";
-			}
-			Console.WriteLine(firstLine + "\n" + secondLine + "\n" + thirdLine + "\n");
-
-		}
-		/// <summary>
 		/// Print actual board to the console.
 		/// </summary>
-		/// <param name="coordinate">ex. "A1", "B3"</param>
+		/// <param name="coordinate">ex. "A1", "B3" or "none"</param>
 		private void PrintBoard(string coordinate)
 		{
 			Console.WriteLine("- - - - - - - - - -");
 			Console.WriteLine("Level: {0}", difficulty);
 			Console.WriteLine("Guess Chances: {0}\n", guessChancesLeft);
 
-			boardDict[coordinate] = coordinates[coordinate];
+			if (coordinate != "none")
+			{
+				boardDict[coordinate] = coordinates[coordinate];
+			}
 
 			string first_row = "  1";
 			string second_row = "A ";
@@ -231,7 +223,7 @@ namespace memory_game
 		}
 
 		/// <summary>
-		/// Method <c>AssignCoordinates</c> assign words to the field <c>coordinates<c>
+		/// Assigns words to the field <c>coordinates<c>
 		/// </summary>
 		/// <param name="length">
 		/// sets length of the <c>coordinates</c>.Length must be 4 for easy game or 8 for hard game
@@ -259,22 +251,82 @@ namespace memory_game
 			}
 		}
 
-		private async Task SaveScore()
+		/// <summary>
+		/// If you get a high score then save your score to the file.
+		/// </summary>
+		private void SaveScore()
 		{
-			Console.WriteLine("Enter your name: ");
-			string name = Console.ReadLine();
-			//System.Text.StringBuilder score = new System.Text.StringBuilder();
-			DateTime today = DateTime.Today;
-			string score = $"{name} | {today.ToShortDateString()} | {stopWatch.Elapsed.TotalSeconds} " + 
-							$"| {guessChances - guessChancesLeft} |";
-			if (difficulty == "easy")
+			string path = $"high_score_{difficulty}.txt";
+			List<string> lines = File.ReadAllLines(path).ToList();
+			if (lines.Count == 0) // if file is empty
 			{
-				await File.WriteAllTextAsync("high_score_easy.txt", score);
+				string score = EnterScore();
+				File.WriteAllText(path, score);
 			}
 			else
 			{
-				await File.WriteAllTextAsync("high_score_hard.txt", score);
+				int user_tries = guessChances - guessChancesLeft;
+				double user_time = stopWatch.Elapsed.TotalSeconds;
+				for (int i = 0; i < lines.Count; i++)
+				{
+					string[] line = lines[i].Split('|');
+					int el_tries = Int32.Parse(line[3]);
+					double el_time = Double.Parse(line[2]);
+					if (user_tries < el_tries) // compare tries
+					{
+						string score = EnterScore();
+						lines.Insert(i, score);
+						if (lines.Count > 10) // if lines > 10 delete last line
+						{
+							lines.RemoveAt(lines.Count - 1);
+						}
+						File.WriteAllLines(path, lines);
+						return;
+					}
+					else if (user_tries == el_tries && user_time < el_time) // compare time
+					{
+						string score = EnterScore();
+						lines.Insert(i, score);
+						if (lines.Count > 10) // if lines > 10 delete last line
+						{
+							lines.RemoveAt(lines.Count - 1);
+						}
+						File.WriteAllLines(path, lines);
+						return;
+					}
+				}
+				if (lines.Count < 10) // Add score to last line - if file is not empty && has < 10 lines && score is lower.
+				{
+					string score = EnterScore();
+					lines.Add(score);
+					File.WriteAllLines(path, lines);
+				}
 			}
+		}
+
+		/// <summary>
+		/// Save your name to the score.
+		/// </summary>
+		/// <returns>Return your score</returns>
+		private string EnterScore()
+		{
+			Console.WriteLine("\nEnter your name: ");
+			string name = Console.ReadLine();
+			DateTime today = DateTime.Today;
+			string score = $"{name} | {today.ToShortDateString()} | {stopWatch.Elapsed.TotalSeconds} " +
+							$"| {guessChances - guessChancesLeft} |";
+
+			return score;
+		}
+
+		/// <summary>
+		/// Print High Score to the console
+		/// </summary>
+		private void PrintScore()
+		{
+			string path = $"high_score_{difficulty}.txt";
+			string text = File.ReadAllText(path);
+			Console.WriteLine($"- - - High Score - - -\n{text}\n");
 		}
 	}
 }

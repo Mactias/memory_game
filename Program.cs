@@ -20,13 +20,13 @@ namespace memory_game
 					ConsoleKeyInfo difficulty = Console.ReadKey();
 					if (difficulty.KeyChar == '1') // Easy difficulty
 					{
-						GetWords(4);
-						GameEngine game = new GameEngine("easy", GetWords(4));
+						Console.Clear();
+						new GameEngine("easy", GetWords(4));
 					}
 					else if (difficulty.KeyChar == '2') // Hard difficulty
 					{
-						GetWords(8);
-						GameEngine game = new GameEngine("hard", GetWords(8));
+						Console.Clear();
+						new GameEngine("hard", GetWords(8));
 					}
 					else
 					{
@@ -48,21 +48,15 @@ namespace memory_game
 		{
 			Random rnd = new Random();
 			string path = "Words.txt";
-			string readText = File.ReadAllText(path);
+			List<string> all_words = File.ReadAllLines(path).ToList();
 
 			string[] words = new string[count];
-			List<string> all_words = readText.Split("\n").ToList<string>();
 
 			for (int i = 0; i < count; i++)
 			{
 				int index = rnd.Next(0, all_words.Count);
 				words[i] = all_words[index];
 				all_words.RemoveAt(index);
-			}
-
-			for (int i = 0; i < words.Length; i++)
-			{
-				words[i] = words[i].Trim();
 			}
 
 			string[] words2 = new string[words.Length * 2];
