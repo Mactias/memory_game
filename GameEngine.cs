@@ -257,14 +257,17 @@ namespace memory_game
 		private void SaveScore()
 		{
 			string path = $"high_score_{difficulty}.txt";
-			List<string> lines = File.ReadAllLines(path).ToList();
-			if (lines.Count == 0) // if file is empty
+			if (!File.Exists(path))
 			{
 				string score = EnterScore();
-				File.WriteAllText(path, score);
+				using (StreamWriter sw = File.CreateText(path))
+				{
+					sw.WriteLine(score);
+				}
 			}
 			else
 			{
+				List<string> lines = File.ReadAllLines(path).ToList();
 				int user_tries = guessChances - guessChancesLeft;
 				double user_time = stopWatch.Elapsed.TotalSeconds;
 				for (int i = 0; i < lines.Count; i++)
